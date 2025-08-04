@@ -93,10 +93,18 @@ PACKAGES_DIR = Path("./packages")
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
-def get_json_file(file_path) -> dict:
-    with open(file_path, "r") as f:
-        return json.load(f)
-
+def get_json_file(file_path):
+    try:
+        with open(file_path, 'r') as f:
+            content = f.read().strip()
+            if not content:
+                return {}  
+            return json.loads(content)
+    except FileNotFoundError:
+        return {} 
+    except json.JSONDecodeError:
+        logging.warning(f"Invalid JSON in {file_path}, returning empty dict")
+        return {}
 
 def get_tracking_data():
     try:
